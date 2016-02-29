@@ -26,13 +26,6 @@ Publish fake Robotiq status data to /SModelRobotInput to simulate opening and cl
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-#########################################
-# Usage:
-#########################################
-# roscore
-# rosrun robotiq_fake fake_robotiq_s.py
-# rosrun robotiq_s_model_control SModelSimpleController.py
-
 
 import rospy
 from robotiq_s_model_control.msg import _SModel_robot_input as inputMsg
@@ -73,7 +66,7 @@ def basic_move(state, pos):
 
 
 def gripper_move(state, pos_A, pos_B, pos_C, pos_S):
-    if state.gACT == 1: # if activated
+    if state.gACT == 1:
 
         CLOSED_POSITION = 255
         if state.gMOD == 1:  # pinch
@@ -90,7 +83,11 @@ def gripper_move(state, pos_A, pos_B, pos_C, pos_S):
             return
         # status to moving
         rosinfo('moving dist: '+str(dist))
-        state.gSTA = 0
+        state.gSTA = 0  # move complete
+        state.gDTA = 0
+        state.gDTB = 0
+        state.gDTC = 0
+        state.gDTS = 0
 
         # estimate time; it takes CLOSE_TIME to move 255 counts
         time_A = (dist_A/255.0)*CLOSE_TIME
@@ -179,6 +176,14 @@ def gripper_move(state, pos_A, pos_B, pos_C, pos_S):
             state.gPOS = clamp(state.gPOS+MOTION_S*dp_S, 0, 255)
             rospy.sleep(1.0/UPDATE_RATE_HZ)
         state.gSTA = 3  # move complete
+        state.gDTA = 3
+        state.gDTB = 3
+        state.gDTC = 3
+        state.gDTS = 3
+	state.gDTA = 3
+	state.gDTB = 3
+	state.gDTC = 3
+	state.gDTS = 3
         rosinfo('move complete')
 
 # callback to handle issued commands (e.g. from Rviz)
@@ -199,6 +204,10 @@ def callback_command(command):
             state.gIMC = 1
             state.gMOD = 0
             state.gSTA = 0
+            state.gDTA = 0
+            state.gDTB = 0
+            state.gDTC = 0
+            state.gDTS = 0
             gripper_move(state, 0, 0, 0, state.gPOS)
             gripper_move(state, 0, 0, 0, 0)
             gripper_move(state, 0, 0, 0, 255)
@@ -207,11 +216,19 @@ def callback_command(command):
             gripper_move(state, 0, 0, 0, 137)
             state.gIMC = 3
             state.gSTA = 3
+            state.gDTA = 3
+            state.gDTB = 3
+            state.gDTC = 3
+            state.gDTS = 3
             rosinfo('initialized')
         elif command.rACT == 1 and command.rGTO == 1 and command.rICF == 1: # individual control
             rosinfo('individual control')
             state.gGTO = 1
             state.gSTA = 0
+            state.gDTA = 0
+            state.gDTB = 0
+            state.gDTC = 0
+            state.gDTS = 0
             # change mode
             if previous_mode == 0:  # basic
                 gripper_move(state, 0, 0, 0, 137)
@@ -228,10 +245,18 @@ def callback_command(command):
                 gripper_move(state, command.rPRA, command.rPRB, command.rPRC, command.rPRS)
             state.gGTO = 1
             state.gSTA = 3
+            state.gDTA = 3
+            state.gDTB = 3
+            state.gDTC = 3
+            state.gDTS = 3
         elif command.rACT == 1 and command.rGTO == 1 and command.rICF == 0 and state.gMOD == 0: # basic
             # rosinfo('basic move to '+str(command.rPRA))
             state.gGTO = 1
             state.gSTA = 0
+            state.gDTA = 0
+            state.gDTB = 0
+            state.gDTC = 0
+            state.gDTS = 0
             # change mode
             if previous_mode == 1:  # pinch
                 rosinfo('basic')
@@ -250,9 +275,17 @@ def callback_command(command):
             previous_mode = 0
             state.gGTO = 1
             state.gSTA = 3
+            state.gDTA = 3
+            state.gDTB = 3
+            state.gDTC = 3
+            state.gDTS = 3
         elif command.rACT == 1 and command.rGTO == 1 and command.rICF == 0 and state.gMOD == 1: # pinch
             state.gGTO = 1
             state.gSTA = 0
+            state.gDTA = 0
+            state.gDTB = 0
+            state.gDTC = 0
+            state.gDTS = 0
             # change mode
             if previous_mode == 0:  # basic
                 rosinfo('pinch')
@@ -271,9 +304,17 @@ def callback_command(command):
             previous_mode = 1
             state.gGTO = 1
             state.gSTA = 3
+            state.gDTA = 3
+            state.gDTB = 3
+            state.gDTC = 3
+            state.gDTS = 3
         elif command.rACT == 1 and command.rGTO == 1 and command.rICF == 0 and state.gMOD == 2: # wide
             state.gGTO = 1
             state.gSTA = 0
+            state.gDTA = 0
+            state.gDTB = 0
+            state.gDTC = 0
+            state.gDTS = 0
             # change mode
             if previous_mode == 0:  # basic
                 rosinfo('wide')
@@ -292,9 +333,17 @@ def callback_command(command):
             previous_mode = 2
             state.gGTO = 1
             state.gSTA = 3
+            state.gDTA = 3
+            state.gDTB = 3
+            state.gDTC = 3
+            state.gDTS = 3
         elif command.rACT == 1 and command.rGTO == 1 and command.rICS == 0 and state.gMOD == 3: # scissor
             state.gGTO = 1
             state.gSTA = 0
+            state.gDTA = 0
+            state.gDTB = 0
+            state.gDTC = 0
+            state.gDTS = 0
             # change mode
             if previous_mode == 0:  # basic
                 rosinfo('scissor')
@@ -313,6 +362,10 @@ def callback_command(command):
             previous_mode = 3
             state.gGTO = 1
             state.gSTA = 3
+            state.gDTA = 3
+            state.gDTB = 3
+            state.gDTC = 3
+            state.gDTS = 3
 
 
 def fake_robotiq(state):
