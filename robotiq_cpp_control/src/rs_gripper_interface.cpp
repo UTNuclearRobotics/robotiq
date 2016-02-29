@@ -397,7 +397,7 @@ void RSGripperInterface::cb_getGripperStatus(const robotiq_s_model_control::SMod
 }
 
 // Process incoming ROS commands
-void RSGripperInterface::cb_command(const grasp_interface::RSGripperCommand& alpha)
+void RSGripperInterface::cb_command(const robotiq_cpp_control::RSGripperCommand& alpha)
 {
   if (activated != true)
     activate();

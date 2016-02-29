@@ -28,8 +28,8 @@
 
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
-#include <grasp_interface/RSGripperCommand.h>
-#include <grasp_interface/RCGripperCommand.h>
+#include <robotiq_cpp_control/RSGripperCommand.h>
+#include <robotiq_cpp_control/RCGripperCommand.h>
 
 #ifndef GRIPPER_INTERFACE_H
 #define GRIPPER_INTERFACE_H
