@@ -73,7 +73,7 @@ def basic_move(state, pos):
 
 
 def gripper_move(state, pos_A, pos_B, pos_C, pos_S):
-    if state.gACT == 1:
+    if state.gACT == 1: # if activated
 
         CLOSED_POSITION = 255
         if state.gMOD == 1:  # pinch

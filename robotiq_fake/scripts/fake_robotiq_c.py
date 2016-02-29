@@ -24,16 +24,9 @@ Publish fake Robotiq status data to /CModelRobotInput to simulate opening and cl
 # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS 
 # OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+ # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-#########################################
-# Usage:
-#########################################
-# roscore
-# rosrun robotiq_fake fake_robotiq_c.py
-# rosrun robotiq_c_model_control CModelSimpleController.py
+ # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 import rospy
@@ -70,12 +63,12 @@ def clamp(value, min_value=0, max_value=255):
 
 def gripper_move(pos, speed):
     CLOSED_POSITION = 255
+    #rosinfo(speed)
     
     # calculate distance fingers will move
     dist = clamp(abs(clamp(pos, 0, CLOSED_POSITION)-state.gPO), 0, CLOSED_POSITION)
 
-    if dist == 0:
-        return
+
     # status to moving
     rosinfo('moving dist: '+str(dist))
     state.gSTA = 0
@@ -131,12 +124,14 @@ def callback_command(command):
             gripper_move(0,command.rSP)
             state.gSTA = 3
             rosinfo('initialized')
-        elif command.rACT == 1 and command.rGTO == 1 and command.rICF == 0 and state.gMOD == 0: # basic
+        elif command.rACT == 1 and command.rGTO == 1: # basic
             # rosinfo('basic move to '+str(command.rPRA))
             state.gGTO = 1
             state.gSTA = 0
             # move to new position
             if command.rPR != state.gPO:
+                gripper_move(command.rPR,command.rSP)
+            else:
                 gripper_move(command.rPR,command.rSP)
             state.gGTO = 1
             state.gSTA = 3
