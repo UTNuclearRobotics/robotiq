@@ -79,7 +79,7 @@ public:
   
   // ROS callbacks
   void cb_getGripperStatus(const robotiq_c_model_control::CModel_robot_input& msg);
-  void cb_command(const grasp_interface::RCGripperCommand& alpha);
+  void cb_command(const robotiq_cpp_control::RCGripperCommand& alpha);
   
   // Basic Commands //////////////////////////////////////////////////////////////////////////
   void reset();

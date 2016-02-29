@@ -235,7 +235,7 @@ void RCGripperInterface::cb_getGripperStatus(const robotiq_c_model_control::CMod
 }
 
 // Send commands via a ROS topic, as opposed to the other methods.
-void RCGripperInterface::cb_command(const grasp_interface::RCGripperCommand& alpha)
+void RCGripperInterface::cb_command(const robotiq_cpp_control::RCGripperCommand& alpha)
 {
   if (activated != true)
 	activate();
